@@ -95,8 +95,12 @@ class SWKClient{
                 authorizeHandler(false)
             }
         }
+        authController.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "关闭", style: UIBarButtonItemStyle.Plain, target:viewController, action: "dismissModalViewControllerAnimated:")
+
+        let navigation = UINavigationController(rootViewController:authController)
+        
         dispatch_async(dispatch_get_main_queue()){
-            viewController.presentViewController(authController, animated: true){}
+            viewController.presentViewController(navigation, animated: true){}
         }
     }
     
@@ -105,6 +109,10 @@ class SWKClient{
         HTTP Get方法
     */
         self.sendRequest(url, parameters: parameters, httpMethod: SLRequestMethod.GET, completion: completion)
+    }
+    
+    func get(url:String, completion:((SWKHTTPResponse)->())! = nil){
+        self.sendRequest(url, parameters: nil, httpMethod: SLRequestMethod.GET, completion: completion)
     }
     
     func post(url:String, parameters:Dictionary<String,String>! = nil, completion:((SWKHTTPResponse)->())! = nil){
@@ -312,7 +320,6 @@ class SWKClient{
             self.authorizeCallBack = callBack
             
             super.init(nibName:nil,bundle:nil)
-            
             self.modalTransitionStyle = UIModalTransitionStyle.CoverVertical
         }
         
