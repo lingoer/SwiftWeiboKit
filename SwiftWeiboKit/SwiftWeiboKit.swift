@@ -9,13 +9,10 @@
 import Foundation
 import UIKit
 import Social
-//Later
-//import WebKit
-
 
 
 class SWKClient{
-    /*
+/*
     SWKClient是SwiftWeiboKit的主要工具类
     它封装了整个OAuth2.0的授权流程,并提供了几个简便易用的请求方法：
     使用方法：
@@ -35,18 +32,18 @@ class SWKClient{
     client.presentAuthorizeView(fromViewController: self){
     (isSuccess : Bool) in
     if isSuccess{
-    client.get("https://api.weibo.com/2/statuses/user_timeline.json",parameters:nil){
-    (response) in
-    switch response{
-    case .success(let successResp):
-    println(successResp.json)
-    case .failure(let failureResp):
-    println(failureResp)
+        client.get("https://api.weibo.com/2/statuses/user_timeline.json",parameters:nil){
+        (response) in
+            switch response{
+            case .success(let successResp):
+                println(successResp.json)
+            case .failure(let failureResp):
+                println(failureResp)
+            }
+        }
     }
     }
-    }
-    }
-    */
+*/
     
     
     /*
@@ -61,20 +58,30 @@ class SWKClient{
     var account:SWKAccount?
     
     init(clientID:String,clientSecret:String,redirectURI:String){
-        /*
+    /*
         构造方法:传入的三个参数参见新浪开放平台的文档
-        */
+    */
         self.clientID = clientID
         self.clientSecret = clientSecret
         self.redirectURI = redirectURI
     }
     
+    func isAuthValid()->Bool{
+    /*
+        返回当前的认证是否有效
+    */
+        if self.account?.accessToken&&self.account?.expireDate&&self.account?.uid{
+            return true
+        }
+        return false
+    }
+    
     func presentAuthorizeView(fromViewController viewController:UIViewController, authorizeHandler:(Bool)->()){
-        /*
+    /*
         调出用户授权页面给用户输入用户名及密码
         fromViewController: 表示从哪个ViewController将此页面Modal出来，必传。
         authorizeHandler:   表示OAuth完成后的结果，会回调一个布尔值表征成功与否
-        */
+    */
         let authController = SWKAuthController(clientID:self.clientID,clientSecret:self.clientSecret,redirectURI:self.redirectURI){
             (result : SWKAuthorizationResult) in
             switch result{
@@ -94,23 +101,23 @@ class SWKClient{
     }
     
     func get(url:String, parameters:Dictionary<String,String>! = nil, completion:((SWKHTTPResponse)->())! = nil){
-        /*
+    /*
         HTTP Get方法
-        */
+    */
         self.sendRequest(url, parameters: parameters, httpMethod: SLRequestMethod.GET, completion: completion)
     }
     
     func post(url:String, parameters:Dictionary<String,String>! = nil, completion:((SWKHTTPResponse)->())! = nil){
-        /*
+    /*
         HTTP POST方法
-        */
+    */
         self.sendRequest(url, parameters: parameters, httpMethod: SLRequestMethod.POST, completion: completion)
     }
     
     func sendRequest(url:String, parameters:Dictionary<String,String>! = nil,httpMethod:SLRequestMethod , completion:((SWKHTTPResponse)->())! = nil){
-        /*
+    /*
         通用的发起新浪API HTTP请求的方法，需指明使用的是哪种方法
-        */
+    */
         var payload : Dictionary<String,String> = [:]
         if let account=self.account{
             payload["access_token"]=account.accessToken
@@ -131,51 +138,53 @@ class SWKClient{
     
     
     struct SWKAccount{
-        /*
+    /*
         封装后的OAuth2信息
-        */
+    */
         var accessToken:String
         var expireDate:NSDate
         var uid:String
     }
     
     enum SWKAuthorizationResult{
-        /*
+    /*
         Granted,表示用户通过输入用户名密码授权通过，其中的SWKAccount是授权后获取到的的OAuth2信息
         Rejected,表示用户手动取消或驳回授权
         Failed,表示非用户意愿的授权失败,例如,网络错误
-        */
+    */
         case Granted(SWKAccount)
         case Rejected
         case Failed
     }
     
     enum SWKHTTPResponse:LogicValue{
-        /*
+    /*
         封装后的 新浪API HTTP 响应,分为成功与失败两种不同的enum值：
         两种值分别在其中封装了不同的数据类型及方法。
         同时，由于实现了LogicValue协议，亦可以直接通过if等逻辑控制语句对相应结果进行判断
         
         使用示例1，通过switch语句(推荐):
-        let httpResponse:SWKHTTPResponse
+        {
+        httpResponse:SWKHTTPResponse in
         
         switch httpResponse{
         case .success(let successResp):
-        println (success.json)  //只有成功的值才拥有.json Property
+            println (success.json)  //只有成功的值才拥有.json Property
         case .failure(let failedResp):
-        println (failedResp)    //成功与失败的值均遵守Printable协议，可以直接使用println输出文本
+            println (failedResp)    //成功与失败的值均遵守Printable协议，可以直接使用println输出文本
+        }
         }
         使用实例2，通过if语句:
         if httpResponse{
-        println(httpResponse.rawData!)
+            println(httpResponse.rawData!)
         }
-        */
+    */
         
         case success(SuccessResp)
         case failure(FailedResp)
         
         struct SuccessResp:Printable{
-            /*
+        /*
             SWKHTTPResponse值为.success时封装的结构体：
             其中：
             content:        返回的Raw Data，以NSData封装
@@ -185,7 +194,7 @@ class SWKClient{
             encoding:       所采用的编码，例如UTF-8
             json:           Computing Property，序列化后的JSON对象
             string:         纯文本
-            */
+        */
             let content : NSData
             let statusCode : Int
             let headers : NSDictionary
@@ -205,12 +214,12 @@ class SWKClient{
         }
         
         struct FailedResp:Printable{
-            /*
+        /*
             SWKHTTPResponse值为.failure时封装的结构体：
             其中：
             error:          NSError对象，一般是由底层的 NSURLSession 产生，一般表征网络错误
             message:        新浪服务器对此错误的描述，本来是一段JSON，懒得转了，直接放了文本，凑合着看吧……
-            */
+        */
             let error : NSError!
             let message : String!
             var description: String {
@@ -225,14 +234,14 @@ class SWKClient{
         }
         
         init(data:NSData!, response:NSURLResponse!, error:NSError!) {
-            /*
+        /*
             init方法，必须使用此方法对本enum进行构造
             其中:
             data:NSData!,
             response:NSURLResponse!,
             error:NSError!
             这几个参数就是NSURLSession、NSURLConnection或SLRequest在网络请求时的标准回调参数
-            */
+        */
             
             if let httpResponse = response as? NSHTTPURLResponse {
                 switch httpResponse.statusCode {
@@ -286,11 +295,11 @@ class SWKClient{
     
     
     class SWKAuthController: UIViewController,UIWebViewDelegate {
-        /*
+    /*
         不稳定的授权Web页面,通过 - presentAuthorizeView 方法调出的Web页面就是由此ViewController生成。
         Web授权完毕后会自动dismiss，并Invoke回调
         由于必须非常操蛋地访问Web，此部分代码与UIKit耦合了，有空可能会想点其他方式来解决这个问题
-        */
+    */
         let clientID:String
         let clientSecret:String
         let redirectURI:String
@@ -310,11 +319,10 @@ class SWKClient{
         override func viewDidLoad() {
             super.viewDidLoad()
             if let frame = self.view?.bounds{
-                //            let wv =
                 let authView = UIWebView(frame: frame)
                 authView.delegate = self
                 self.view?.addSubview(authView)
-                let request = NSURLRequest(URL: NSURL(string:"https://api.weibo.com/oauth2/authorize?client_id=3128324185&redirect_uri=http://127.0.0.1/&display=mobile"))
+                let request = NSURLRequest(URL: NSURL(string:"https://api.weibo.com/oauth2/authorize?client_id=\(clientID)&redirect_uri=\(redirectURI)&display=mobile"))
                 authView.loadRequest(request)
             }
         }

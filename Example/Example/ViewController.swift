@@ -8,11 +8,20 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-                            
+class ViewController: UITableViewController {
+    let client = SWKClient(clientID:"", clientSecret:"", redirectURI:"")
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    @IBAction func login(sender : UIButton) {
+        client.presentAuthorizeView(fromViewController: self){
+            isSuccess in
+            
+        }
     }
 
     override func didReceiveMemoryWarning() {

@@ -12,6 +12,8 @@
 		17EC7923194C04750049F1A3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17EC7921194C04750049F1A3 /* Main.storyboard */; };
 		17EC7925194C04750049F1A3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17EC7924194C04750049F1A3 /* Images.xcassets */; };
 		17EC7931194C04750049F1A3 /* ExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EC7930194C04750049F1A3 /* ExampleTests.swift */; };
+		17EC793C194C04B20049F1A3 /* SwiftWeiboKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EC793B194C04B20049F1A3 /* SwiftWeiboKit.swift */; };
+		17EC793D194C04B20049F1A3 /* SwiftWeiboKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EC793B194C04B20049F1A3 /* SwiftWeiboKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,7 @@
 		17EC792A194C04750049F1A3 /* ExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17EC792F194C04750049F1A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17EC7930194C04750049F1A3 /* ExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTests.swift; sourceTree = "<group>"; };
+		17EC793B194C04B20049F1A3 /* SwiftWeiboKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftWeiboKit.swift; path = ../SwiftWeiboKit/SwiftWeiboKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +60,7 @@
 		17EC790F194C04750049F1A3 = {
 			isa = PBXGroup;
 			children = (
+				17EC793A194C04930049F1A3 /* SwiftWeiboKit */,
 				17EC791A194C04750049F1A3 /* Example */,
 				17EC792D194C04750049F1A3 /* ExampleTests */,
 				17EC7919194C04750049F1A3 /* Products */,
@@ -107,6 +111,14 @@
 				17EC792F194C04750049F1A3 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		17EC793A194C04930049F1A3 /* SwiftWeiboKit */ = {
+			isa = PBXGroup;
+			children = (
+				17EC793B194C04B20049F1A3 /* SwiftWeiboKit.swift */,
+			);
+			name = SwiftWeiboKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -210,6 +222,7 @@
 			files = (
 				17EC7920194C04750049F1A3 /* ViewController.swift in Sources */,
 				17EC791E194C04750049F1A3 /* AppDelegate.swift in Sources */,
+				17EC793C194C04B20049F1A3 /* SwiftWeiboKit.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,6 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17EC7931194C04750049F1A3 /* ExampleTests.swift in Sources */,
+				17EC793D194C04B20049F1A3 /* SwiftWeiboKit.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
