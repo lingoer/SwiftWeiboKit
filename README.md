@@ -2,6 +2,9 @@
 
 SwiftWeiboKit is An delightful Sina Weibo library written in Swift
 
+## Update:
+Add SwiftyJSON for JSON handling
+
 ## Getting started
 
 Drag SwiftWeiboKit.swift to your project
