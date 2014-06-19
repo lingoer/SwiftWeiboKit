@@ -206,8 +206,8 @@ class SWKClient{
         }
     */
         
-        case success(SuccessResp)
-        case failure(FailedResp)
+        case Success(SuccessResp)
+        case Failure(FailedResp)
         
         struct SuccessResp:Printable{
         /*
@@ -226,16 +226,17 @@ class SWKClient{
             let headers : NSDictionary
             let MIMEType : String
             let encoding : String
-            var json : AnyObject!{
-            return NSJSONSerialization.JSONObjectWithData(content, options: NSJSONReadingOptions.AllowFragments, error: nil)
+            var json : JSONValue{
+                let jsonObject : AnyObject! = NSJSONSerialization.JSONObjectWithData(content, options: NSJSONReadingOptions.AllowFragments, error: nil);
+                return JSONValue(jsonObject)
             }
             var string : String{
-            return NSString(data:content,encoding:NSUTF8StringEncoding)
+                return NSString(data:content,encoding:NSUTF8StringEncoding)
             }
             
             //Protocol Printable
             var description: String {
-            return self.string
+                return self.string
             }
         }
         
@@ -259,7 +260,7 @@ class SWKClient{
             }
         }
         
-        init(data:NSData!, response:NSURLResponse!, error:NSError!) {
+        init(data:NSData?, response:NSURLResponse?, error:NSError?) {
         /*
             init方法，必须使用此方法对本enum进行构造
             其中:
@@ -272,20 +273,26 @@ class SWKClient{
             if let httpResponse = response as? NSHTTPURLResponse {
                 switch httpResponse.statusCode {
                 case 200..299:
+                    var rawData:NSData
+                    if !data{
+                        rawData = NSData()
+                    }else{
+                        rawData = data!
+                    }
                     let resp = SuccessResp(
-                        content : data,
+                        content : rawData,
                         statusCode : httpResponse.statusCode,
                         headers : httpResponse.allHeaderFields,
                         MIMEType : httpResponse.MIMEType,
                         encoding : httpResponse.textEncodingName)
-                    self = .success(resp)
+                    self = .Success(resp)
                 default:
                     var message:String! = nil
                     if data{
                         message = NSString(data:data,encoding:NSUTF8StringEncoding)
                     }
                     let resp = FailedResp(error:error,message:message)
-                    self = .failure(resp)
+                    self = .Failure(resp)
                 }
                 
             }else{
@@ -294,24 +301,33 @@ class SWKClient{
                     message = NSString(data:data,encoding:NSUTF8StringEncoding)
                 }
                 let resp = FailedResp(error:error,message:message)
-                self = .failure(resp)
+                self = .Failure(resp)
             }
         }
         
         //Computing Property:成功时返回数据，失败时返回nil，参见本enum的使用示例2
-        var rawData:NSData!{
-        switch self{
-        case .success(let resp):
-            return resp.content
-        default:
-            return nil
+        var rawData:NSData?{
+            switch self{
+            case .Success(let resp):
+                return resp.content
+            default:
+                return nil
+            }
+        }
+        
+        var json:JSONValue{
+            switch self{
+            case .Success(let resp):
+                return resp.json
+            case .Failure(let Failure):
+                return JSONValue.INVALID
             }
         }
         
         //Protocol LogicValue
         func getLogicValue() -> Bool{
             switch self{
-            case .success:
+            case .Success:
                 return true
             default:
                 return false

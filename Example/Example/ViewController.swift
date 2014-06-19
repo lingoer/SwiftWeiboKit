@@ -10,8 +10,8 @@ import UIKit
 
 class ViewController: UITableViewController {
     //需要将这3个参数替换为你自己在新浪申请的参数
-    let client = SWKClient(clientID:"", clientSecret:"", redirectURI:"")
-    var statuses:NSArray!
+    let client = SWKClient(clientID:"YOUR_CLIENT_ID", clientSecret:"YOUR_CLIENT_SECRET", redirectURI:"YOUR_REDIRECT_URI")
+    var statuses:JSONValue = JSONValue.INVALID
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,32 +26,30 @@ class ViewController: UITableViewController {
                 //若授权成功，就可以直接访问API了，这里是：statuses/home_timeline.json
                 self.client.get("https://api.weibo.com/2/statuses/home_timeline.json"){
                     result in
-                    switch result{
-                    case .success(let success):
-                        if let statusesArray = (success.json as? NSDictionary)?["statuses"] as? NSArray{
-                            self.statuses = statusesArray
-                            self.tableView.reloadData()
-                        }
-                    default:
-                        println(result)
-                    }
+                    self.statuses = result.json
+                    self.tableView.reloadData()
                 }
             }
         }
     }
 
     override func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int{
-        if statuses{
-            return statuses.count
+        if statuses["statuses"].array{
+            return statuses["statuses"].array!.count
         }
         return 0
     }
     
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell!{
-        let cell:UITableViewCell = tableView.dequeueReusableCellWithIdentifier("StatusCell", forIndexPath: indexPath) as UITableViewCell
+        var cell:UITableViewCell
+        if let dequeuedCell = tableView.dequeueReusableCellWithIdentifier("StatusCell", forIndexPath: indexPath) as? UITableViewCell{
+            cell = dequeuedCell
+        }else{
+            cell = UITableViewCell()
+        }
         
-        cell.detailTextLabel.text = (statuses[indexPath.row] as? NSDictionary)?["text"] as? String
-        cell.textLabel.text = ((statuses[indexPath.row] as? NSDictionary)?["user"] as? NSDictionary)?["name"] as? String
+        cell.detailTextLabel.text = statuses["statuses"][indexPath.row]["text"].string
+        cell.textLabel.text = statuses["statuses"][indexPath.row]["user"]["name"].string
         cell.setNeedsLayout()
         return cell
     }
