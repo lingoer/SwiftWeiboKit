@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UITableViewController {
     //需要将这3个参数替换为你自己在新浪申请的参数
-    let client = SWKClient(clientID:"YOUR_CLIENT_ID", clientSecret:"YOUR_CLIENT_SECRET", redirectURI:"YOUR_REDIRECT_URI")
+    let client = SWKClient(clientID:"", clientSecret:"", redirectURI:"")
     var statuses:JSONValue = JSONValue.INVALID
     
     override func viewDidLoad() {
@@ -27,6 +27,7 @@ class ViewController: UITableViewController {
                 self.client.get("https://api.weibo.com/2/statuses/home_timeline.json"){
                     result in
                     self.statuses = result.json
+                    println(self.statuses)
                     self.tableView.reloadData()
                 }
             }

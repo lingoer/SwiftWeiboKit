@@ -158,7 +158,9 @@ class SWKClient{
         sinaRequest.performRequestWithHandler{
             (data : NSData!, httpResponse : NSHTTPURLResponse!, error : NSError!) in
             let response = SWKHTTPResponse(data: data,response: httpResponse,error: error)
-            completion(response)
+            dispatch_async(dispatch_get_main_queue()){
+                completion(response)
+            }
         }
     }
     
@@ -227,8 +229,7 @@ class SWKClient{
             let MIMEType : String
             let encoding : String
             var json : JSONValue{
-                let jsonObject : AnyObject! = NSJSONSerialization.JSONObjectWithData(content, options: NSJSONReadingOptions.AllowFragments, error: nil);
-                return JSONValue(jsonObject)
+                return JSONValue(content)
             }
             var string : String{
                 return NSString(data:content,encoding:NSUTF8StringEncoding)
