@@ -27,7 +27,7 @@
 import Foundation
 import UIKit
 import Social
-
+import WebKit
 
 class SWKClient{
 /*
@@ -321,7 +321,7 @@ class SWKClient{
             case .Success(let resp):
                 return resp.json
             case .Failure(let Failure):
-                return JSONValue.INVALID
+                return JSONValue.JInvalid
             }
         }
         
@@ -337,7 +337,7 @@ class SWKClient{
     }
     
     
-    class SWKAuthController: UIViewController,UIWebViewDelegate {
+    class SWKAuthController: UIViewController,WKNavigationDelegate {
     /*
         不稳定的授权Web页面,通过 - presentAuthorizeView 方法调出的Web页面就是由此ViewController生成。
         Web授权完毕后会自动dismiss，并Invoke回调
@@ -355,45 +355,55 @@ class SWKClient{
             self.authorizeCallBack = callBack
             
             super.init(nibName:nil,bundle:nil)
+            self.edgesForExtendedLayout=UIRectEdge.None
             self.modalTransitionStyle = UIModalTransitionStyle.CoverVertical
+        }
+        
+        override func loadView(){
+            self.view = WKWebView()
+            (self.view as WKWebView).navigationDelegate = self
         }
         
         override func viewDidLoad() {
             super.viewDidLoad()
-            if let frame = self.view?.bounds{
-                let authView = UIWebView(frame: frame)
-                authView.delegate = self
-                self.view?.addSubview(authView)
+            
+            if let webView = self.view as? WKWebView{
                 let request = NSURLRequest(URL: NSURL(string:"https://api.weibo.com/oauth2/authorize?client_id=\(clientID)&redirect_uri=\(redirectURI)&display=mobile"))
-                authView.loadRequest(request)
+                webView.loadRequest(request)
             }
         }
         
-        func webView(webView: UIWebView!, shouldStartLoadWithRequest request: NSURLRequest!, navigationType: UIWebViewNavigationType) -> Bool{
-            if request.URL.absoluteString.hasPrefix(self.redirectURI){
-                if let array = request?.URL?.query?.componentsSeparatedByString("&"){
-                    for kvPairString in array {
-                        let kvArray = kvPairString.componentsSeparatedByString("=")
-                        if kvArray.count == 2{
-                            if kvArray[0] == "code"{
-                                let code = kvArray[1]
-                                self.requestAccessToken(code)
+        func webView(webView: WKWebView!, decidePolicyForNavigationAction navigationAction: WKNavigationAction!, decisionHandler: ((WKNavigationActionPolicy) -> Void)!){
+            if let url = navigationAction?.request?.URL{
+                if url.absoluteString.hasPrefix(self.redirectURI) {
+                    if let array = url.query?.componentsSeparatedByString("&"){
+                        for kvPairString in array {
+                            let kvArray = kvPairString.componentsSeparatedByString("=")
+                            if kvArray.count == 2{
+                                if kvArray[0] == "code"{
+                                    let code = kvArray[1]
+                                    self.requestAccessToken(code)
+                                }
                             }
                         }
                     }
+                    decisionHandler(WKNavigationActionPolicy.Cancel)
                 }
             }
-            return true;
+            decisionHandler(WKNavigationActionPolicy.Allow)
+            return
         }
-        
+
         func requestAccessToken(code:String){
             let url = NSURL(string:"https://api.weibo.com/oauth2/access_token")
+            let client = SWKClient(clientID:clientID,clientSecret:clientSecret,redirectURI:redirectURI)
             let payload = [
                 "client_id":clientID,
                 "client_secret":clientSecret,
                 "grant_type":"authorization_code",
                 "code":code,
                 "redirect_uri":redirectURI]
+            
             let sinaRequest = SLRequest(forServiceType : SLServiceTypeSinaWeibo, requestMethod : SLRequestMethod.POST, URL : url, parameters: payload)
             
             sinaRequest.performRequestWithHandler{
@@ -402,24 +412,21 @@ class SWKClient{
                     self.authorizeCallBack(SWKAuthorizationResult.Failed)
                     return
                 }
-                if let json = (NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: nil) as? NSDictionary) {
-                    let expire = json["expires_in"] as? NSNumber
-                    let uid = json["uid"] as? NSString
-                    let token = json["access_token"] as? NSString
-                    if expire&&uid&&token{
-                        self.authorizeCallBack(SWKAuthorizationResult.Granted(SWKAccount(accessToken:token!
-                            ,expireDate:NSDate(timeIntervalSince1970:expire!.doubleValue),
-                            uid:uid!)))
-                        return
-                        
-                    }else{
-                        self.authorizeCallBack(SWKAuthorizationResult.Failed)
-                        return
-                    }
+                let json = JSONValue(data)
+                let expire = json["expires_in"].number
+                let uid = json["uid"].string
+                let token = json["access_token"].string
+                if expire&&uid&&token{
+                    self.authorizeCallBack(SWKAuthorizationResult.Granted(SWKAccount(accessToken:token!
+                        ,expireDate:NSDate(timeIntervalSince1970:expire!),
+                        uid:uid!)))
+                    return
                 }else{
                     self.authorizeCallBack(SWKAuthorizationResult.Failed)
                     return
                 }
+                
+
             }
         }
     }

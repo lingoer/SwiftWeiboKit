@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1754D704195305AB0004ECA5 /* SwiftJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1754D703195305AB0004ECA5 /* SwiftJSON.swift */; };
+		17C966F41957EB4300853D20 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C966F31957EB4300853D20 /* SwiftyJSON.swift */; };
 		17EC791E194C04750049F1A3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EC791D194C04750049F1A3 /* AppDelegate.swift */; };
 		17EC7920194C04750049F1A3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EC791F194C04750049F1A3 /* ViewController.swift */; };
 		17EC7923194C04750049F1A3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17EC7921194C04750049F1A3 /* Main.storyboard */; };
@@ -28,7 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1754D703195305AB0004ECA5 /* SwiftJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftJSON.swift; path = ../SwiftWeiboKit/SwiftJSON.swift; sourceTree = "<group>"; };
+		17C966F31957EB4300853D20 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftyJSON.swift; path = ../SwiftWeiboKit/SwiftyJSON.swift; sourceTree = "<group>"; };
 		17EC7918194C04750049F1A3 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17EC791C194C04750049F1A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17EC791D194C04750049F1A3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -118,7 +118,7 @@
 		17EC793A194C04930049F1A3 /* SwiftWeiboKit */ = {
 			isa = PBXGroup;
 			children = (
-				1754D703195305AB0004ECA5 /* SwiftJSON.swift */,
+				17C966F31957EB4300853D20 /* SwiftyJSON.swift */,
 				17EC793B194C04B20049F1A3 /* SwiftWeiboKit.swift */,
 			);
 			name = SwiftWeiboKit;
@@ -224,9 +224,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				17EC7920194C04750049F1A3 /* ViewController.swift in Sources */,
-				1754D704195305AB0004ECA5 /* SwiftJSON.swift in Sources */,
 				17EC791E194C04750049F1A3 /* AppDelegate.swift in Sources */,
 				17EC793C194C04B20049F1A3 /* SwiftWeiboKit.swift in Sources */,
+				17C966F41957EB4300853D20 /* SwiftyJSON.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
